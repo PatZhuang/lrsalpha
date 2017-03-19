@@ -30,13 +30,13 @@ function selectIdentity(btn) {
         $("#warewolf").slider({
             orientation: "horizontal",
             range: "min",
-            max: players - spIds - 2,   //村民设置为默认2个
-            min: 2
+            max: players - spIds,   //村民设置为默认2个
+            min: 0
         });
-        $("#warewolf").slider("value", players - spIds - 2);
+        $("#warewolf").slider("value", players - spIds);
     } else {
         var warewolf = $("#warewolf").slider("value");
-        if (warewolf + 2 + spIds + 1 > players && warewolf == 2) {
+        if (warewolf + spIds + 1 > players && warewolf == 2) {
             alert('人数有误');
             return;
         }
@@ -46,10 +46,10 @@ function selectIdentity(btn) {
         $("#warewolf").slider({
             orientation: "horizontal",
             range: "min",
-            max: players - spIds - 2,   //村民设置为默认2个
+            max: players - spIds,
             min: 2
         });
-        $("#warewolf").slider("value", players - spIds - 2);
+        $("#warewolf").slider("value", players - spIds);
     }
 }
 
@@ -67,7 +67,7 @@ function onPlayersChange(ev) {
         if (isNaN(targ.value)) {
             targ.value = 0;
         } else {
-            targ.value = targ.value > 20 ? 20 : targ.value;
+            targ.value = targ.value > 15 ? 15 : targ.value;
             targ.value = targ.value < 0 ? 0 : targ.value;
         }
         $("#players").slider("value", parseInt(playersInput.value));
@@ -78,10 +78,10 @@ function onPlayersChange(ev) {
     $("#warewolf").slider({
         orientation: "horizontal",
         range: "min",
-        max: players - spIds - 2,   //村民设置为默认2个
+        max: players - spIds,
         min: 2
     });
-    $("#warewolf").slider("value", players - spIds - 2);
+    $("#warewolf").slider("value", players - spIds);
 }
 
 function onWarewolfChange(ev) {
@@ -99,7 +99,7 @@ function onWarewolfChange(ev) {
         if (isNaN(targ.value)) {
             targ.value = 0;
         } else {
-            targ.value = targ.value > players - spIds - 2 ? players - spIds - 2 : targ.value;
+            targ.value = targ.value > players - spIds? players - spIds: targ.value;
             targ.value = targ.value < 2 ? 2 : targ.value;
         }
         $("#warewolf").slider("value", parseInt(warewolfInput.value));
@@ -111,8 +111,8 @@ function onWarewolfChange(ev) {
 
 function gameStart() {
     var players = $("#players").slider("value");
-    var warewolves = $("#warewolf").slider("value");
-    if (warewolves+spIds+2 > players) {
+    var warewolf = $("#warewolf").slider("value");
+    if (warewolf+spIds+1 > players && warewolf == 2) {
         alert('人数有误');
         return;
     }
@@ -124,7 +124,7 @@ function gameStart() {
     var p = document.createElement('p');
     var idNum;
     p.innerHTML = '狼人 : ';
-    while (warewolves--) {
+    while (warewolf--) {
         idNum = Math.floor((Math.random() * ids.length));
         p.innerHTML += ids[idNum] + ' ';
         ids.splice(idNum, 1);
