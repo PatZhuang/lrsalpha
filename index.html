@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="utf-8">
+    <title>狼人杀发牌员</title>
+
+    <script src="langrensha.js" charset="utf-8"></script>
+
+    <link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="http://apps.bdimg.com/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="http://apps.bdimg.com/libs/jqueryui/1.10.4/css/jquery-ui.min.css">
+    <link rel="stylesheet" type="text/css" href="langrensha.css">
+
+    <script type="text/javascript">
+        $(function() {
+            //输入框数值初始化, 值在本地 js 中定义为全局变量
+            document.getElementById("playersValue").value = 8;
+            document.getElementById("warewolfValue").value = 2;
+
+            //滑动条初始化
+            $("#players").slider({
+                orientation: "horizontal",
+                range: "min",
+                max: 20,
+                min: 8
+            });
+            $("#warewolf").slider({
+                orientation: "horizontal",
+                range: "min",
+                max: $("#players").slider("value") - 2,
+                min: 2
+            });
+            $("#players").slider("value", 8);
+            $("#warewolf").slider("value", 2);
+            $("#players").slider({
+                slide: onPlayersChange,
+                change: onPlayersChange
+            });
+            $("#warewolf").slider({
+                slide: onWarewolfChange,
+                change: onWarewolfChange
+            });
+        });
+    </script>
+</head>
+
+<body onload="main()">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <a href="#" class="navbar-brand">狼人杀发牌员</a>
+        </div>
+    </nav>
+    <div class="container" id="mainContainer">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6 col-sm-12 col-xs-12" id="configDiv">
+                <div class="row" id="playersRow">
+                    <div class="col-md-4 col-sm-4 col-xs-4" id="playersLabel">玩家总数:</div>
+                    <div class="col-md-4 col-sm-4 col-xs-4" id="players"></div>
+                    <div class="col-md-4 col-sm-4 col-xs-4">
+                        <input type="text" name="playersValue" class="form-control" id="playersValue" onchange="onPlayersChange()">
+                    </div>
+                </div>
+                <div class="row" id="warewolfRow">
+                    <div class="col-md-4 col-sm-4 col-xs-4" id="warewolfLabel">狼人:</div>
+                    <div class="col-md-4 col-sm-4 col-xs-4" id="warewolf"></div>
+                    <div class="col-md-4 col-sm-4 col-xs-4">
+                        <input type="text" name="warewolfValue" class="form-control" id="warewolfValue" onchange="onWarewolfChange()">
+                    </div>
+                </div>
+                <div class="row" id="spinStateRow">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-8 col-sm-12 col-xs-12" id="spinStateBtns">
+                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='yuyanjia'>预言家</button>
+                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='nvwu'>女巫</button>
+                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='lieren'>猎人</button>
+                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='baichi'>白痴</button>
+                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='shouwei'>守卫</button>
+                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='yehaizi'>野孩子</button>
+                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='qiubite'>丘比特</button>
+                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='qishi'>骑士</button>
+                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='yingzi'>影子</button>
+                        <!-- <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='bailang'>白狼</button>
+                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='langxiongdi'>狼兄弟</button> -->
+                        <br />
+                        <button type="button" class="btn btn-success" id="startBtn" onclick="gameStart()" data-toggle="modal" data-target="#myModal">开始发牌</button>
+                    </div>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="clearModal()"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalLabel" style="text-align: center">身份信息</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="modal-body" style="text-align: center" id='mainModalBody'>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="clearModal()">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>
