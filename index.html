@@ -59,7 +59,8 @@
     <Modal
         v-model="roleModal"
         class-name="vertical-center-modal"
-        style="text-align: center">
+        style="text-align: center"
+        :mask-closable="false">
         <i-table :columns="roleTableColumn" :data="roleTable" stripe border size="small">
         </i-table>
         <div slot="footer">
