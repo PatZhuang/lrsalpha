@@ -2,7 +2,8 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>iview example</title>
+    <title>狼人杀发牌员</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
     <link href="https://cdn.bootcss.com/iview/2.0.0-rc.14/styles/iview.css" rel="stylesheet">
     <script src="https://cdn.bootcss.com/vue/2.3.3/vue.min.js"></script>
     <script src="https://cdn.bootcss.com/iview/2.0.0-rc.14/iview.min.js"></script>
@@ -30,6 +31,7 @@
         </Menu-item>
         <i-button style="margin-left: 20px" type="primary" @click="handleGameStart">嗷！</i-button>
     </i-menu>
+    <br>
     <!--卡片行-->
     <Row type="flex" justify="center">
         <i-col style="text-align: center">
@@ -74,7 +76,7 @@
                 display: 'inline-block',
                 width: window.innerWidth < 768? '90%' : '30%',
                 height: '130px',
-                margin: window.innerWidth < 768? 'auto' : '15px 15px 0px 15px',
+                margin: window.innerWidth < 768? '0 0 10px 0' : '0 15px 15px 15px',
             },
             roles: [
                 {
