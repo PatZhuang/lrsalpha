@@ -13,9 +13,7 @@
         .vertical-center-modal{
             display: flex;
             align-items: center;
-            justify-content: center;
-
-            
+            justify-content: center;            
         }
         .vertical-center-modal .ivu-modal{
             top: 0;
@@ -32,7 +30,6 @@
         </Menu-item>
         <i-button style="margin-left: 20px" type="primary" @click="handleGameStart">嗷！</i-button>
     </i-menu>
-    <br>
     <!--卡片行-->
     <Row type="flex" justify="center">
         <i-col style="text-align: center">
@@ -55,6 +52,8 @@
             </Card>
         </i-col>
     </Row>
+    <br>
+    <br>
     <Modal
         v-model="roleModal"
         class-name="vertical-center-modal"
@@ -75,8 +74,7 @@
                 display: 'inline-block',
                 width: window.innerWidth < 768? '90%' : '30%',
                 height: '130px',
-                margin: window.innerWidth < 768? 'auto' : '15px',
-                marginBottom: '10px',
+                margin: window.innerWidth < 768? 'auto' : '15px 15px 0px 15px',
             },
             roles: [
                 {
