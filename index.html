@@ -1,114 +1,190 @@
 <!DOCTYPE html>
-<html lang="zh">
-
+<html>
 <head>
     <meta charset="utf-8">
-    <title>狼人杀发牌员</title>
+    <title>iview example</title>
+    <link href="https://cdn.bootcss.com/iview/2.0.0-rc.14/styles/iview.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/vue/2.3.3/vue.min.js"></script>
+    <script src="https://cdn.bootcss.com/iview/2.0.0-rc.14/iview.min.js"></script>
+    <style>
+        body {
+            background-color: #f5f7f9;
+        }
+        .vertical-center-modal{
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-    <script src="langrensha.js" charset="utf-8"></script>
-
-    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdn.bootcss.com/jqueryui/1.12.1/jquery-ui.min.js"></script>
-    <link href="https://cdn.bootcss.com/jqueryui/1.12.1/jquery-ui.min.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="langrensha.css">
-
-    <script type="text/javascript">
-        $(function() {
-            //输入框数值初始化, 值在本地 js 中定义为全局变量
-            document.getElementById("playersValue").value = 8;
-            document.getElementById("warewolfValue").value = 2;
-
-            //滑动条初始化
-            $("#players").slider({
-                orientation: "horizontal",
-                range: "min",
-                max: 20,
-                min: 8
-            });
-            $("#warewolf").slider({
-                orientation: "horizontal",
-                range: "min",
-                max: $("#players").slider("value"),
-                min: 2
-            });
-            $("#players").slider("value", 8);
-            $("#warewolf").slider("value", 2);
-            $("#players").slider({
-                slide: onPlayersChange,
-                change: onPlayersChange
-            });
-            $("#warewolf").slider({
-                slide: onWarewolfChange,
-                change: onWarewolfChange
-            });
-        });
-    </script>
+            
+        }
+        .vertical-center-modal .ivu-modal{
+            top: 0;
+        }
+    </style>
 </head>
-
-<body onload="main()">
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="navbar-header">
-            <a href="#" class="navbar-brand">狼人杀发牌员</a>
+<body>
+<div id="app">
+    <!--导航栏-->
+    <i-menu mode="horizontal" theme="dark" active-name="1">
+        <Menu-item name="1">
+            <Icon type="ionic"></Icon>
+            狼人杀发牌员 alpha 0.2
+        </Menu-item>
+        <i-button style="margin-left: 20px" type="primary" @click="handleGameStart">嗷！</i-button>
+    </i-menu>
+    <br>
+    <!--卡片行-->
+    <Row type="flex" justify="center">
+        <i-col style="text-align: center">
+            <Card v-for="role in roles" :style="cardStyle">
+                <div style="text-align:center">
+                    <Row type="flex" justify="space-between" align="top">
+                        <i-col span="6">
+                            <img :src="role.cardImage" alt="" width="100%">
+                        </i-col>
+                        <i-col span="16" style="text-align: left">
+                            <i-form :model="role" :label-width="80" label-position="left">
+                                <Form-item prop="number" :label="role.name">
+                                    <Input-number :max="10" :min="0" v-model="role.number"></Input-number>
+                                </Form-item>
+                            </i-form>
+                            <span style="font-size: 12px; display:block; margin-top: 0px">{{ role.description }}</span>
+                        </i-col>
+                    </Row>
+                </div>
+            </Card>
+        </i-col>
+    </Row>
+    <Modal
+        v-model="roleModal"
+        class-name="vertical-center-modal"
+        style="text-align: center">
+        <i-table :columns="roleTableColumn" :data="roleTable" stripe border size="small">
+        </i-table>
+        <div slot="footer">
+            <i-button type="success" long large @click="roleModal = false">游戏结束</i-button>
         </div>
-    </nav>
-    <div class="container" id="mainContainer">
-        <div class="row">
-            <div class="col-md-3"></div>
-            <div class="col-md-6 col-sm-12 col-xs-12" id="configDiv">
-                <div class="row" id="playersRow">
-                    <div class="col-md-4 col-sm-4 col-xs-4" id="playersLabel">玩家总数:</div>
-                    <div class="col-md-4 col-sm-4 col-xs-4" id="players"></div>
-                    <div class="col-md-4 col-sm-4 col-xs-4">
-                        <input type="text" name="playersValue" class="form-control" id="playersValue" onchange="onPlayersChange()">
-                    </div>
-                </div>
-                <div class="row" id="warewolfRow">
-                    <div class="col-md-4 col-sm-4 col-xs-4" id="warewolfLabel">狼人:</div>
-                    <div class="col-md-4 col-sm-4 col-xs-4" id="warewolf"></div>
-                    <div class="col-md-4 col-sm-4 col-xs-4">
-                        <input type="text" name="warewolfValue" class="form-control" id="warewolfValue" onchange="onWarewolfChange()">
-                    </div>
-                </div>
-                <div class="row" id="spinStateRow">
-                    <div class="col-md-2"></div>
-                    <div class="col-md-8 col-sm-12 col-xs-12" id="spinStateBtns">
-                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='yuyanjia'>预言家</button>
-                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='nvwu'>女巫</button>
-                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='lieren'>猎人</button>
-                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='baichi'>白痴</button>
-                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='shouwei'>守卫</button>
-                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='yehaizi'>野孩子</button>
-                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='qiubite'>丘比特</button>
-                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='qishi'>骑士</button>
-                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='yingzi'>影子</button>
-                        <!-- <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='bailang'>白狼</button>
-                        <button type="button" onclick="selectIdentity(this)" class="btn btn-default identityBtn" id='langxiongdi'>狼兄弟</button> -->
-                        <br />
-                        <button type="button" class="btn btn-success" id="startBtn" onclick="gameStart()" data-toggle="modal" data-target="#myModal">开始发牌</button>
-                    </div>
-                </div>
-                <!-- Modal -->
-                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="clearModal()"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title" id="myModalLabel" style="text-align: center">身份信息</h4>
-                            </div>
-                            <div class="modal-body">
-                                <div class="modal-body" style="text-align: center" id='mainModalBody'>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal" onclick="clearModal()">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    </Modal>
+</div>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            roleModal: false,
+            cardStyle: {
+                display: 'inline-block',
+                width: window.innerWidth < 768? '90%' : '30%',
+                height: '130px',
+                margin: window.innerWidth < 768? 'auto' : '15px',
+                marginBottom: '10px',
+            },
+            roles: [
+                {
+                    name: '村民',
+                    description: '好人阵营最强角色',
+                    number: 3,
+                    cardImage: './cardImage/村民.jpg'
+                },
+                {
+                    name: '狼人',
+                    description: '一个小知识：金刚狼(wolverine)并不是狼人。',
+                    number: 3,
+                    cardImage: './cardImage/狼人.jpg'
+                },
+                {
+                    name: '预言家',
+                    description: '一个没有什么用的角色。',
+                    number: 1,
+                    cardImage: './cardImage/预言家.jpg'
+                },
+                {
+                    name: '女巫',
+                    description: '一个被影子觊觎的角色。常见功能是瞬间领导狼人方获得胜利。',
+                    number: 1,
+                    cardImage: './cardImage/女巫.jpg'
+                },
+                {
+                    name: '猎人',
+                    description: '一个同样没有什么用的角色。',
+                    number: 1,
+                    cardImage: './cardImage/猎人.jpg'
+                },
+                {
+                    name: '守卫',
+                    description: '我都不知道这个角色加来干啥用。',
+                    number: 0,
+                    cardImage: './cardImage/守卫.jpg'
+                },
+                {
+                    name: '白痴',
+                    description: '这还要解释什么？？？',
+                    number: 0,
+                    cardImage: './cardImage/白痴.jpg'
+                },
+                {
+                    name: '野孩子',
+                    description: '呃。',
+                    number: 0,
+                    cardImage: './cardImage/野孩子.jpg'
+                },
+                {
+                    name: '影子',
+                    description: '嘿嘿嘿嘿嘿嘿嘿嘿嘿',
+                    number: 0,
+                    cardImage: './cardImage/小女孩.jpg'
+                },
+                {
+                    name: '骑士',
+                    description: '跟女巫平起平坐的角色。常见功能是比较缓慢地帮助狼人获得胜利。',
+                    number: 0,
+                    cardImage: './cardImage/老骑士与生锈的剑.jpg'
+                },
+                {
+                    name: '白狼王',
+                    description: '不爆捏着过年？',
+                    number: 0,
+                    cardImage: './cardImage/白狼王.jpg'
+                },
+                {
+                    name: '自定义角色',
+                    description: '一张白板',
+                    number: 0,
+                    cardImage: './cardImage/天使.jpg'
+                },
+            ],
+            roleTableColumn: [{
+                title: '号码',
+                key: 'index',
+                align: 'center'
+            },{
+                title: '身份',
+                key: 'role',
+                align: 'center'
+            }],
+            roleTable: []
+        },
+        methods: {
+            handleGameStart() {
+                this.roleTable = [];
+                var players = [];
+                for (role of this.roles) {
+                    var numbers = role.number;
+                    while (numbers--) {
+                        players.push(role.name);
+                    }
+                }
+                players = players.sort((a, b) => Math.random() > 0.5? -1 : 1)
+                console.log(players);
+                players.forEach((value, index) => {
+                    this.roleTable.push({
+                        index: index+1,
+                        role: value
+                    });
+                })
+                this.roleModal = true;
+            },
+        }
+    })
+  </script>
 </body>
-
 </html>
